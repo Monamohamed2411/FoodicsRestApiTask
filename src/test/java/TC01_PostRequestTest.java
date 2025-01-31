@@ -2,9 +2,9 @@ import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import org.json.simple.JSONObject;
-import org.testng.Assert;
 import org.testng.Reporter;
 import org.testng.annotations.Test;
+import org.testng.asserts.SoftAssert;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,6 +14,7 @@ public class TC01_PostRequestTest extends BaseClass{
     public static int userId;
 
     public void PostRequestTest(){
+        SoftAssert softAssert = new SoftAssert();
 
         try {
 
@@ -38,15 +39,23 @@ public class TC01_PostRequestTest extends BaseClass{
 
             int statusCode = postResponse.getStatusCode();
             if (statusCode !=201){
-                Assert.fail("the creating is fail, returned Status code: " + statusCode);
+                softAssert.fail("the creating is fail, returned Status code: " + statusCode);
+                Reporter.log("the creation failed. Status Code: " + statusCode);
             }
-            Assert.assertEquals(postResponse.jsonPath().getString("name"), "mona");
-            Assert.assertEquals(postResponse.jsonPath().getString("job"), "tester");
-            Assert.assertEquals(postResponse.jsonPath().getInt("age"), 30);
+            else {
+                Reporter.log("the creation successfully. Status Code: " + statusCode);
+
+            }
+            softAssert.assertEquals(postResponse.jsonPath().getString("name"), "mona");
+            softAssert.assertEquals(postResponse.jsonPath().getString("job"), "tester");
+            softAssert.assertEquals(postResponse.jsonPath().getInt("age"), 30);
+            Reporter.log("the creation successfully with user ID: " + userId, true);
         }catch (Exception e){
-            Assert.fail("the exception: " + e.getMessage());
+            softAssert.fail("the exception: " + e.getMessage());
+            Reporter.log("the exception " + e.getMessage(), true);
+
         }
 
-
+        softAssert.assertAll();
     }
 }

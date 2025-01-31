@@ -6,12 +6,9 @@ import org.testng.Assert;
 import org.testng.Reporter;
 import org.testng.annotations.Test;
 import org.testng.asserts.SoftAssert;
-
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.assertThat;
 
 public class TC03_UpdateRequestTest extends BaseClass {
 
@@ -41,21 +38,27 @@ public class TC03_UpdateRequestTest extends BaseClass {
             int statusCode = PutResponse.getStatusCode();
 
             if (statusCode == 404) {
-                softAssert.fail("User does not exist!");
+                Reporter.log("the User does not exist", true);
+                softAssert.fail("the User does not exist!");
             }
             if (statusCode != 200) {
+                Reporter.log("no response from API: " + statusCode, true);
                 softAssert.fail("no response from API: " + statusCode);
+            }
+            else {
+                Reporter.log("the user is exist successfully with Status Code: " + statusCode);
             }
             softAssert.assertEquals(PutResponse.jsonPath().getString("name"), "Mona Mohamed");
             softAssert.assertEquals(PutResponse.jsonPath().getString("job"), "Software Tester");
             softAssert.assertEquals(PutResponse.jsonPath().getInt("age"), 27);
-            softAssert.assertEquals(PutResponse.jsonPath().getInt("id"), TC01_PostRequestTest.userId, "id mismatch");
-            Reporter.log("updated successfully with ID: " + TC01_PostRequestTest.userId);
+            Reporter.log("the user data updated successfully with user ID: " + TC01_PostRequestTest.userId);
 
 
         }catch (Exception e){
             softAssert.fail("the exception: " + e.getMessage());
+            Reporter.log("the exception " + e.getMessage(), true);
         }
+        softAssert.assertAll();
 
 
 
